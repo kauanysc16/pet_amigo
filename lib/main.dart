@@ -1,27 +1,36 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:pet_amigo/views/cadastro_page.dart';
-import 'package:pet_amigo/views/home_page.dart';
-import 'package:pet_amigo/views/login_page.dart';
+import 'views/cadastro_page.dart';
+import 'views/home_page.dart';
+import 'views/login_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'firebase_options.dart'; // Importando o arquivo gerado
 
-void main() {
-  runApp(const PetAdoptionApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, // Usando as opções geradas
+  );
+  runApp(const MyApp());
 }
 
-class PetAdoptionApp extends StatelessWidget {
-  const PetAdoptionApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pet Amigo',
+      title: 'PetAmigo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
       routes: {
         '/': (context) => const TelaPrincipal(),
-        '/login': (context) => const LoginPage(), // Página de login
-        '/register': (context) => const CadastroPage(), // Página de cadastro
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const CadastroPage(),
       },
     );
   }

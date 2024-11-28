@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.5.4
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -14,12 +14,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^6.2.1
   provider: ^6.0.5
-  firebase_auth: ^5.3.3
   firebase_storage: ^12.3.6
-  firebase_core: ^3.8.0  # Updated to match firebase_storage requirement
   cloud_firestore: ^5.1.0
-  google_maps_flutter: ^2.1.1  # Verifique se está usando a versão mais recente
+  google_maps_flutter: ^2.1.1
   geocoding: ^2.0.0
+  firebase_auth: ^5.3.3
+  firebase_core: ^3.8.0
 
 dev_dependencies:
   flutter_test:

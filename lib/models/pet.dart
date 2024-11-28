@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pet_amigo/models/anunciante.dart'; // Certifique-se de que a classe Anunciante está importada
+
 class Pet {
   final String nome;
   final String idade;
@@ -5,8 +8,8 @@ class Pet {
   final String genero;
   final List<String> caracteristicas;
   final String localizacao;
-  final double latitude; // Adicionando o campo latitude
-  final double longitude; // Adicionando o campo longitude
+  final Anunciante anunciante;
+  final String biografia;
 
   Pet({
     required this.nome,
@@ -15,102 +18,40 @@ class Pet {
     required this.genero,
     required this.caracteristicas,
     required this.localizacao,
-    required this.latitude, // Inicializando latitude
-    required this.longitude, // Inicializando longitude
+    required this.anunciante,
+    required this.biografia,
   });
 
-  static List<Pet> buscarPets() {
-    return [
-      Pet(
-        nome: 'Max',
-        idade: '2 anos',
-        imagem: 'assets/pets/max.png',
-        genero: 'Macho',
-        caracteristicas: ['Energético', 'Amigável'],
-        localizacao: 'São Paulo, SP',
-        latitude: -23.550520, // Latitude de São Paulo
-        longitude: -46.633308, // Longitude de São Paulo
-      ),
-      Pet(
-        nome: 'Tina',
-        idade: '3 anos',
-        imagem: 'assets/pets/tina.png',
-        genero: 'Fêmea',
-        caracteristicas: ['Brincalhona', 'Afeituosa'],
-        localizacao: 'Rio de Janeiro, RJ',
-        latitude: -22.906847, // Latitude do Rio de Janeiro
-        longitude: -43.172896, // Longitude do Rio de Janeiro
-      ),
-      Pet(
-        nome: 'Juninho',
-        idade: '1 ano',
-        imagem: 'assets/pets/juninho.png',
-        genero: 'Macho',
-        caracteristicas: ['Curioso', 'Leal'],
-        localizacao: 'Belo Horizonte, MG',
-        latitude: -19.919126, // Latitude de Belo Horizonte
-        longitude: -43.934572, // Longitude de Belo Horizonte
-      ),
-      Pet(
-        nome: 'Tyler',
-        idade: '4 anos',
-        imagem: 'assets/pets/tyler.png',
-        genero: 'Macho',
-        caracteristicas: ['Protetor', 'Inteligente'],
-        localizacao: 'Curitiba, PR',
-        latitude: -25.428954, // Latitude de Curitiba
-        longitude: -49.267137, // Longitude de Curitiba
-      ),
-      Pet(
-        nome: 'Fred',
-        idade: '5 anos',
-        imagem: 'assets/pets/fred.png',
-        genero: 'Macho',
-        caracteristicas: ['Calmo', 'Gentil'],
-        localizacao: 'Porto Alegre, RS',
-        latitude: -30.033056, // Latitude de Porto Alegre
-        longitude: -51.230000, // Longitude de Porto Alegre
-      ),
-      Pet(
-        nome: 'Polly',
-        idade: '2 anos',
-        imagem: 'assets/pets/polly.png',
-        genero: 'Fêmea',
-        caracteristicas: ['Ativa', 'Feliz'],
-        localizacao: 'Florianópolis, SC',
-        latitude: -27.595377, // Latitude de Florianópolis
-        longitude: -48.548049, // Longitude de Florianópolis
-      ),
-      Pet(
-        nome: 'Thor',
-        idade: '3 anos',
-        imagem: 'assets/pets/thor.png',
-        genero: 'Macho',
-        caracteristicas: ['Forte', 'Leal'],
-        localizacao: 'Fortaleza, CE',
-        latitude: -3.717220, // Latitude de Fortaleza
-        longitude: -38.543244, // Longitude de Fortaleza
-      ),
-      Pet(
-        nome: 'Julie',
-        idade: '1 ano',
-        imagem: 'assets/pets/julie.png',
-        genero: 'Fêmea',
-        caracteristicas: ['Carinhosa', 'Brincalhona'],
-        localizacao: 'Recife, PE',
-        latitude: -8.047562, // Latitude de Recife
-        longitude: -34.877000, // Longitude de Recife
-      ),
-      Pet(
-        nome: 'Beto',
-        idade: '6 anos',
-        imagem: 'assets/pets/beto.png',
-        genero: 'Macho',
-        caracteristicas: ['Experiente', 'Amoroso'],
-        localizacao: 'Salvador, BA',
-        latitude: -12.971398, // Latitude de Salvador
-        longitude: -38.501305, // Longitude de Salvador
-      ),
-    ];
+  // Método para criar um Pet a partir de um documento Firestore
+  factory Pet.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+    // Criando o objeto Anunciante a partir de um documento (presumindo que ele esteja no Firestore)
+    Anunciante anunciante = Anunciante.fromFirestore(data['anunciante']);
+
+    return Pet(
+      nome: data['nome'] ?? '',
+      idade: data['idade'] ?? '',
+      imagem: data['imagem'] ?? '',
+      genero: data['genero'] ?? '',
+      caracteristicas: List<String>.from(data['caracteristicas'] ?? []),
+      localizacao: data['localizacao'] ?? '',
+      anunciante: anunciante, // Passando o anunciante
+      biografia: data['biografia'] ?? '',
+    );
+  }
+
+  // Método para buscar todos os pets do Firestore
+  static Future<List<Pet>> buscarPets() async {
+    try {
+      final petCollection = FirebaseFirestore.instance.collection('pets');
+      final querySnapshot = await petCollection.get();
+      final pets =
+          querySnapshot.docs.map((doc) => Pet.fromFirestore(doc)).toList();
+      return pets;
+    } catch (e) {
+      print('Erro ao buscar os pets: $e');
+      return [];
+    }
   }
 }

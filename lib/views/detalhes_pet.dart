@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart'; // Importa o pacote do Google Maps
-import 'package:geocoding/geocoding.dart'; // Importa o pacote de geocodificação
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pet_amigo/controllers/pet_controller.dart';
 import 'package:pet_amigo/models/pet.dart';
 
@@ -15,196 +14,220 @@ class DetalhePet extends StatefulWidget {
 
 class _DetalhePetState extends State<DetalhePet> {
   final PetController controller = PetController();
-  bool isFavorite = false; // Variável para controlar o estado de favorito
-  String? petLocalizacao; // Variável para armazenar o endereço
-  late GoogleMapController mapController;
-  late CameraPosition _initialPosition;
-  late final anunciante =
-      controller.anunciante; // Declaração da variável 'anunciante'
+  bool isFavorite = false;
+  GoogleMapController? mapController;
+  CameraPosition? _initialPosition;
 
   @override
   void initState() {
     super.initState();
-    _getEndereco(); // Chama a função para obter o endereço ao iniciar
-    _initialPosition = CameraPosition(
-      target: LatLng(widget.pet.latitude, widget.pet.longitude),
-      zoom: 14.0,
-    );
+    _loadPetLocation();
   }
 
-  // Função para realizar a geocodificação reversa
-  Future<void> _getEndereco() async {
+  Future<void> _loadPetLocation() async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        widget.pet.latitude,
-        widget.pet.longitude,
-      );
-      if (placemarks.isNotEmpty) {
-        setState(() {
-          petLocalizacao =
-              "${placemarks[0].locality}, ${placemarks[0].administrativeArea}";
-        });
-      }
+      // Simulação de localização com base na cidade (a lógica de localização real pode ser adaptada conforme necessário)
+      LatLng petLocation =
+          await controller.getPetLocation(widget.pet.localizacao);
+      setState(() {
+        _initialPosition = CameraPosition(
+          target: petLocation,
+          zoom: 14.0,
+        );
+      });
     } catch (e) {
-      print("Erro ao obter o endereço: $e");
+      print("Erro ao obter a localização: $e");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final pet = widget.pet; // Usando o 'pet' passado para o widget
+    final pet = widget.pet;
+    final anunciante = pet.anunciante;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detalhes do Animal'),
-        actions: [
-          IconButton(
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: isFavorite ? Colors.red : Colors.grey,
-              size: 28.0,
-            ),
-            onPressed: () {
-              setState(() {
-                isFavorite = !isFavorite;
-              });
-            },
-          ),
-        ],
+        backgroundColor: const Color(0xFFB6EB7A),
+        elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            elevation: 4.0,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Card com foto, nome, idade, e publicado
+            Card(
+              elevation: 4.0,
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Imagem
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: Image.asset(
-                      pet.imagem,
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Nome e idade do animal
-                  Center(
-                    child: Text(
-                      '${pet.nome} - ${pet.idade} anos',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal[700],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Gênero do animal
-                  Center(
-                    child: Text(
-                      'Gênero: ${pet.genero}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal[700],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Mapa
-                  Text(
-                    "Localização no Mapa",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal[700],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 300,
-                    child: GoogleMap(
-                      initialCameraPosition: _initialPosition,
-                      onMapCreated: (GoogleMapController controller) {
-                        mapController = controller;
-                      },
-                      markers: {
-                        Marker(
-                          markerId: const MarkerId('petLocation'),
-                          position: LatLng(pet.latitude, pet.longitude),
-                          infoWindow: InfoWindow(title: pet.nome),
+                  // Adicionando o favorito dentro do card, ao lado da imagem
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(16.0),
                         ),
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Características
-                  Text(
-                    "Características",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal[700],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    children: pet.caracteristicas
-                        .map(
-                          (caracteristica) => Chip(
-                            label: Text(
-                              caracteristica,
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                            backgroundColor: const Color(0xFFB6EB7A),
+                        child: Image.asset(
+                          pet.imagem,
+                          height: 250,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        top: 16.0,
+                        right: 16.0,
+                        child: IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : Colors.white,
+                            size: 28.0,
                           ),
-                        )
-                        .toList(),
+                          onPressed: () {
+                            setState(() {
+                              isFavorite = !isFavorite;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 24),
-                  // Anunciante
-                  Text(
-                    "Anunciante: ${anunciante?.nome ?? 'Desconhecido'}", // Se 'anunciante' for null, exibe 'Desconhecido'
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal[700],
+                  const SizedBox(height: 16),
+                  // Nome, idade e informações principais
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${pet.nome} - ${pet.idade}',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF4CAF50),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.person,
+                                size: 18, color: Colors.teal),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Publicado por ${anunciante.nome}', // Acessando diretamente o nome
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on,
+                                size: 18, color: Colors.teal),
+                            const SizedBox(width: 4),
+                            Text(
+                              pet.localizacao,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
+                  // Biografia do Anunciante dentro do card
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      "Biografia do Anunciante:",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.teal,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // Localização textual
-                  Text(
-                    "Localização",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal[700],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      pet.biografia, // Acessando diretamente a biografia do pet
+                      style:
+                          const TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  petLocalizacao != null
-                      ? Text(
-                          petLocalizacao!,
-                          style: const TextStyle(fontSize: 16),
-                        )
-                      : const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
-          ),
+            // Características (centralizado)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                "Características",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children: pet.caracteristicas
+                    .map(
+                      (caracteristica) => Chip(
+                        label: Text(
+                          caracteristica,
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                        backgroundColor: const Color(0xFFB6EB7A),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Dados do anunciante (fora do card)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Dados do Anunciante",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.teal,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Nome: ${anunciante.nome}",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    "Número: ${anunciante.numero}",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    "Email: ${anunciante.email}",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
         ),
       ),
     );
