@@ -1,0 +1,46 @@
+name: pet_amigo
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  google_fonts: ^6.2.1
+  provider: ^6.0.5
+  firebase_auth: ^5.3.3
+  firebase_storage: ^12.3.6
+  firebase_core: ^3.8.0  # Updated to match firebase_storage requirement
+  cloud_firestore: ^5.1.0
+  google_maps_flutter: ^2.1.1  # Verifique se está usando a versão mais recente
+  geocoding: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Jomhuria
+      fonts:
+        - asset: assets/fonts/Jomhuria-Regular.ttf
+  assets:
+    - assets/images/pet_amigo_logo.png
+    - assets/pets/max.png
+    - assets/pets/tina.png
+    - assets/pets/juninho.png
+    - assets/pets/tyler.png
+    - assets/pets/fred.png
+    - assets/pets/polly.png
+    - assets/pets/thor.png
+    - assets/pets/julie.png
+    - assets/pets/beto.png
+    - assets/images/header.png
