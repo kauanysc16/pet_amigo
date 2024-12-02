@@ -49,20 +49,6 @@ class _DetalhePetState extends State<DetalhePet> {
         title: const Text('Detalhes do Animal'),
         backgroundColor: const Color(0xFFB6EB7A),
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: isFavorite ? Colors.red : Colors.white,
-              size: 28.0,
-            ),
-            onPressed: () {
-              setState(() {
-                isFavorite = !isFavorite;
-              });
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -77,17 +63,37 @@ class _DetalhePetState extends State<DetalhePet> {
               ),
               child: Column(
                 children: [
-                  // Imagem do pet
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16.0),
-                    ),
-                    child: Image.asset(
-                      pet.imagem,
-                      height: 250,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
+                  // Adicionando o favorito dentro do card, ao lado da imagem
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(16.0),
+                        ),
+                        child: Image.asset(
+                          pet.imagem,
+                          height: 250,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        top: 16.0,
+                        right: 16.0,
+                        child: IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : Colors.white,
+                            size: 28.0,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isFavorite = !isFavorite;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   // Nome, idade e informações principais
@@ -187,14 +193,22 @@ class _DetalhePetState extends State<DetalhePet> {
                             onMapCreated: (GoogleMapController controller) {
                               mapController = controller;
                             },
-                            markers: {
-                              Marker(
-                                markerId: const MarkerId('petLocation'),
-                                position: _initialPosition!.target,
-                                infoWindow: InfoWindow(title: pet.nome),
-                              ),
-                            },
+                            markers: {}, // Removido o marcador do pet
                           ),
+                  ),
+                  // Exibindo a localização como texto centralizado no mapa
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Text(
+                        pet.localizacao ?? 'Localização não disponível',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
