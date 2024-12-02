@@ -116,7 +116,7 @@ class _DetalhePetState extends State<DetalhePet> {
                             const Icon(Icons.person, size: 18, color: Colors.teal),
                             const SizedBox(width: 4),
                             Text(
-                              'Publicado por ${anunciante?.nome ?? 'Desconhecido'}',
+                              'Publicado por ${anunciante.nome ?? 'Desconhecido'}',
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],
@@ -137,10 +137,31 @@ class _DetalhePetState extends State<DetalhePet> {
                       ],
                     ),
                   ),
+                  // Biografia do Anunciante dentro do card
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      "Biografia do Anunciante:",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.teal,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      anunciante.biografia ?? 'Biografia não informada.',
+                      style: const TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
-            // Características
+            // Características (centralizado)
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
@@ -153,64 +174,21 @@ class _DetalhePetState extends State<DetalhePet> {
               ),
             ),
             const SizedBox(height: 8),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children: pet.caracteristicas
-                  .map(
-                    (caracteristica) => Chip(
-                      label: Text(
-                        caracteristica,
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      backgroundColor: const Color(0xFFB6EB7A),
-                    ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 24),
-            // Mapa
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Localização no Mapa",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 200,
-                    child: _initialPosition == null
-                        ? const Center(child: CircularProgressIndicator())
-                        : GoogleMap(
-                            initialCameraPosition: _initialPosition!,
-                            onMapCreated: (GoogleMapController controller) {
-                              mapController = controller;
-                            },
-                            markers: {}, // Removido o marcador do pet
-                          ),
-                  ),
-                  // Exibindo a localização como texto centralizado no mapa
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Center(
-                      child: Text(
-                        pet.localizacao ?? 'Localização não disponível',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal,
+            Center(
+              child: Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children: pet.caracteristicas
+                    .map(
+                      (caracteristica) => Chip(
+                        label: Text(
+                          caracteristica,
+                          style: const TextStyle(color: Colors.black),
                         ),
+                        backgroundColor: const Color(0xFFB6EB7A),
                       ),
-                    ),
-                  ),
-                ],
+                    )
+                    .toList(),
               ),
             ),
             const SizedBox(height: 24),
@@ -230,15 +208,15 @@ class _DetalhePetState extends State<DetalhePet> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Nome: ${anunciante?.nome ?? 'Não informado'}",
+                    "Nome: ${anunciante.nome ?? 'Não informado'}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   Text(
-                    "Número: ${anunciante?.numero ?? 'Não informado'}",
+                    "Número: ${anunciante.numero ?? 'Não informado'}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   Text(
-                    "Email: ${anunciante?.email ?? 'Não informado'}",
+                    "Email: ${anunciante.email ?? 'Não informado'}",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],
