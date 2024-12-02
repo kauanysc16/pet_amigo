@@ -116,7 +116,7 @@ class _DetalhePetState extends State<DetalhePet> {
                             const Icon(Icons.person, size: 18, color: Colors.teal),
                             const SizedBox(width: 4),
                             Text(
-                              'Publicado por ${anunciante.nome}', // Removendo a verificação de nulidade
+                              'Publicado por ${anunciante.nome}', // Acessando diretamente o nome
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],
@@ -128,7 +128,7 @@ class _DetalhePetState extends State<DetalhePet> {
                                 size: 18, color: Colors.teal),
                             const SizedBox(width: 4),
                             Text(
-                              pet.localizacao ?? 'Localização não disponível',
+                              pet.localizacao,
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],
@@ -153,7 +153,7 @@ class _DetalhePetState extends State<DetalhePet> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      anunciante.biografia, // Removendo a verificação de nulidade
+                      pet.biografia, // Acessando diretamente a biografia do pet
                       style: const TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                   ),
