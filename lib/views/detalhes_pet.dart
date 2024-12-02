@@ -116,7 +116,7 @@ class _DetalhePetState extends State<DetalhePet> {
                             const Icon(Icons.person, size: 18, color: Colors.teal),
                             const SizedBox(width: 4),
                             Text(
-                              'Publicado por ${anunciante.nome ?? 'Desconhecido'}',
+                              'Publicado por ${anunciante.nome}', // Removendo a verificação de nulidade
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],
@@ -153,7 +153,7 @@ class _DetalhePetState extends State<DetalhePet> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      anunciante.biografia ?? 'Biografia não informada.',
+                      anunciante.biografia, // Removendo a verificação de nulidade
                       style: const TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                   ),
@@ -208,15 +208,15 @@ class _DetalhePetState extends State<DetalhePet> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Nome: ${anunciante.nome ?? 'Não informado'}",
+                    "Nome: ${anunciante.nome}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   Text(
-                    "Número: ${anunciante.numero ?? 'Não informado'}",
+                    "Número: ${anunciante.numero}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   Text(
-                    "Email: ${anunciante.email ?? 'Não informado'}",
+                    "Email: ${anunciante.email}",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],
